@@ -6,4 +6,18 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="CQRS\Products\Commands\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="MediatR" Version="12.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NadinSoft.Common\NadinSoft.Common.csproj" />
+    <ProjectReference Include="..\NadinSoft.Domain\NadinSoft.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

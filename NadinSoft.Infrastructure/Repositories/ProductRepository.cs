@@ -56,7 +56,7 @@ namespace NadinSoft.Infrastructure.Repositories
             return result;
         }
 
-        public async Task<bool> ExistAsync(Expression<Func<Product, bool>> filter)
+        public async Task<bool> AnyAsync(Expression<Func<Product, bool>> filter)
         {
             var isExist = await _context.Products.AnyAsync(filter);
 

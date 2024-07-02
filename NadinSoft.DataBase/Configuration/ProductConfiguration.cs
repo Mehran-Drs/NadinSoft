@@ -8,9 +8,9 @@ namespace NadinSoft.DataBase.Configuration
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {
-            builder.HasOne(x => x.User)
+            builder.HasOne(x => x.Creator)
                 .WithMany()
-                .HasForeignKey(fk => fk.UserId);
+                .HasForeignKey(fk => fk.CreaetorId);
 
             builder.Property(x => x.Name)
                 .HasMaxLength(150);

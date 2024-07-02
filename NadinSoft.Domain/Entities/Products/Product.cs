@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Identity;
+using NadinSoft.Domain.Entities.Users;
 
 namespace NadinSoft.Domain.Entities.Products
 {
@@ -13,8 +14,8 @@ namespace NadinSoft.Domain.Entities.Products
         public DateTime ProduceDate { get; set; }
         public bool IsAvailable { get; set; }
 
-        public int UserId { get; set; }
-        public IdentityUser User { get; set; }
+        public int CreaetorId { get; set; }
+        public User Creator { get; set; }
 
         public DateTime CreatedAt { get; set; }
         public DateTime? ModifiedAt { get; set; }

@@ -17,6 +17,6 @@ namespace NadinSoft.Domain.Repositories
 
         Task<Product> GetByIdAsync(int id);
 
-        Task<bool> ExistAsync(Expression<Func<Product, bool>> filter);  
+        Task<bool> AnyAsync(Expression<Func<Product, bool>> filter);  
     }
 }
