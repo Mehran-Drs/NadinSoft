@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using NadinSoft.Common.DTOs;
 using NadinSoft.Domain.Entities.Users;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,9 +12,9 @@ namespace NadinSoft.Application.Services.Authentication
     {
         private readonly JwtConfigDto _jwtConfig;
 
-        public JwtService(JwtConfigDto jwtConfig)
+        public JwtService(IOptions<AthenticationConfigDto> options)
         {
-            _jwtConfig = jwtConfig;
+            _jwtConfig = options.Value.Jwt ;
         }
 
         public string GenerateToken(List<Claim> claims)

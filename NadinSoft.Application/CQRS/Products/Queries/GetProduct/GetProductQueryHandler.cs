@@ -4,7 +4,7 @@ using NadinSoft.Domain.Repositories;
 
 namespace NadinSoft.Application.CQRS.Products.Queries.GetProduct
 {
-    public class GetProductQueryHandler : IRequestHandler<GetProductQuery, GetProductQueryResult>
+    internal sealed class GetProductQueryHandler : IRequestHandler<GetProductQuery, GetProductQueryResult>
     {
         private readonly IMapper _mapper;
         private readonly IProductRepository _repository;

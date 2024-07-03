@@ -1,9 +1,10 @@
 ﻿using FluentValidation;
 using NadinSoft.Application.CQRS.Products.Commands.CreateProduct;
+using NadinSoft.Application.CQRS.Products.Commands.EditProduct;
 
 namespace NadinSoft.Application.Validations.Products
 {
-    public class EditProductCommandValidation : AbstractValidator<CreateProductCommand>
+    public class EditProductCommandValidation : AbstractValidator<EditProductCommand>
     {
         public EditProductCommandValidation()
         {

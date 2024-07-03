@@ -12,7 +12,7 @@ namespace NadinSoft.Application.CQRS.Products.Commands.CreateProduct
         private readonly IProductRepository _repository;
         private readonly IValidator<CreateProductCommand> _validator;
 
-        internal CreateProductCommandHandler(IMapper mapper, IProductRepository repository, IValidator<CreateProductCommand> validator)
+        public CreateProductCommandHandler(IMapper mapper, IProductRepository repository, IValidator<CreateProductCommand> validator)
         {
             _mapper = mapper;
             _repository = repository;
@@ -25,6 +25,12 @@ namespace NadinSoft.Application.CQRS.Products.Commands.CreateProduct
             await _validator.ValidateAndThrowAsync(request, cancellationToken);
 
             var product = _mapper.Map<Product>(request);
+
+            var isExist = await _repository.AnyAsync(x=>x.ProduceDate == product.ProduceDate||x.ManufactureEmail == product.ManufactureEmail);
+            if (isExist)
+            {
+                return 0;
+            }
 
             await _repository.CreateAsync(product);
 

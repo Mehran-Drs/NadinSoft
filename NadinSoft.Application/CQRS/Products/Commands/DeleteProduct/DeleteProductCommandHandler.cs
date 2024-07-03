@@ -3,13 +3,13 @@ using FluentValidation;
 using MediatR;
 using NadinSoft.Domain.Repositories;
 
-namespace NadinSoft.Application.CQRS.Products.Commands.EditProduct
+namespace NadinSoft.Application.CQRS.Products.Commands.DeleteProduct
 {
     internal sealed class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, bool>
     {
         private readonly IMapper _mapper;
         private readonly IProductRepository _repository;
-        internal DeleteProductCommandHandler(IProductRepository repository, IMapper mapper, IValidator<DeleteProductCommand> validator)
+        public DeleteProductCommandHandler(IProductRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;

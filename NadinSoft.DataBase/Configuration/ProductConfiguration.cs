@@ -16,7 +16,7 @@ namespace NadinSoft.DataBase.Configuration
                 .HasMaxLength(150);
 
             builder.Property(x => x.ProduceDate)
-                .HasColumnType("datetime(0)");
+                .HasColumnType("datetime");
 
             builder.Property(x => x.ManufactureEmail)
                 .HasMaxLength(250);
@@ -31,13 +31,13 @@ namespace NadinSoft.DataBase.Configuration
                 .IsUnique();
 
             builder.Property(x => x.CreatedAt)
-                .HasColumnType("datetime(0)");
+                .HasColumnType("datetime");
 
             builder.Property(x => x.ModifiedAt)
-                .HasColumnType("datetime(0)");
+                .HasColumnType("datetime");
 
             builder.Property(x => x.RemovedAt)
-                .HasColumnType("datetime(0)");
+                .HasColumnType("datetime");
         }
     }
 }

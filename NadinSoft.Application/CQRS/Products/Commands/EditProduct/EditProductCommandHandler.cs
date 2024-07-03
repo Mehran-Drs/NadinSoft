@@ -10,7 +10,7 @@ namespace NadinSoft.Application.CQRS.Products.Commands.EditProduct
         private readonly IMapper _mapper;
         private readonly IProductRepository _repository;
         private readonly IValidator<EditProductCommand> _validator;
-        internal EditProductCommandHandler(IProductRepository repository, IMapper mapper, IValidator<EditProductCommand> validator)
+        public EditProductCommandHandler(IProductRepository repository, IMapper mapper, IValidator<EditProductCommand> validator)
         {
             _repository = repository;
             _mapper = mapper;

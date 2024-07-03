@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using NadinSoft.Application.Services.Authentication;
 using NadinSoft.Domain.Entities.Users;
@@ -6,7 +8,7 @@ using System.Security.Claims;
 
 namespace NadinSoft.Application.CQRS.Authentication.Query
 {
-    public sealed class LoginQueryHandler : IRequestHandler<LoginQuery, LoginQueryResult>
+    internal sealed class LoginQueryHandler : IRequestHandler<LoginQuery, LoginQueryResult>
     {
         private readonly IJwtService _jwtService;
         private readonly UserManager<User> _userManager;
@@ -21,10 +23,7 @@ namespace NadinSoft.Application.CQRS.Authentication.Query
         {
             var user = await _userManager.FindByNameAsync(request.UserName);
 
-            var result = new LoginQueryResult()
-            {
-                Token = string.Empty
-            };
+            var result = new LoginQueryResult();
 
             if (user != null)
             {
@@ -38,9 +37,19 @@ namespace NadinSoft.Application.CQRS.Authentication.Query
                     };
                     var jwt = _jwtService.GenerateToken(claims);
                     result.Token = jwt;
+                    return result;
                 }
             }
-            return result;
+
+            throw new ValidationException(
+                new List<ValidationFailure>()
+                {
+                    new ValidationFailure()
+                        {
+                            ErrorCode = "NotFound",
+                            ErrorMessage = "User Not Found"
+                        }
+                });
         }
     }
 }

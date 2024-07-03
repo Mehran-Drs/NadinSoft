@@ -20,6 +20,12 @@ namespace NadinSoft.Application.Validations.Authentication
                 .MaximumLength(50)
                 .WithMessage("Maximum Length Is 50 Character");
 
+            RuleFor(x => x.Email)
+               .NotEmpty()
+               .WithMessage("Email Can Not Be Empty")
+               .MaximumLength(250)
+               .WithMessage("Maximum Length Is 250 Character");
+
             RuleFor(x => x.Password)
                 .NotEmpty()
                 .WithMessage("Password Can Not Be Empty");
