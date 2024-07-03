@@ -10,7 +10,7 @@ namespace NadinSoft.DataBase.Configuration
         {
             builder.HasOne(x => x.Creator)
                 .WithMany()
-                .HasForeignKey(fk => fk.CreaetorId);
+                .HasForeignKey(fk => fk.CreatorId);
 
             builder.Property(x => x.Name)
                 .HasMaxLength(150);

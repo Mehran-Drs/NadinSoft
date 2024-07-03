@@ -14,7 +14,7 @@ namespace NadinSoft.Domain.Entities.Products
         public DateTime ProduceDate { get; set; }
         public bool IsAvailable { get; set; }
 
-        public int CreaetorId { get; set; }
+        public int CreatorId { get; set; }
         public User Creator { get; set; }
 
         public DateTime CreatedAt { get; set; }
