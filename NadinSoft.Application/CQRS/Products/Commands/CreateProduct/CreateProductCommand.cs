@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System.Text.Json.Serialization;
 
 namespace NadinSoft.Application.CQRS.Products.Commands.CreateProduct
 {
@@ -10,6 +11,7 @@ namespace NadinSoft.Application.CQRS.Products.Commands.CreateProduct
         public DateTime ProduceDate { get; set; }
         public bool IsAvailable { get; set; }
 
+        [JsonIgnore]
         public int CreatorId { get; set; }
     }
 }
