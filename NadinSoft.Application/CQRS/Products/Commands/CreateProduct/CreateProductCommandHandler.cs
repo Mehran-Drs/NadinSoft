@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
 using NadinSoft.Domain.Entities.Products;
 using NadinSoft.Domain.Repositories;
@@ -29,7 +30,15 @@ namespace NadinSoft.Application.CQRS.Products.Commands.CreateProduct
             var isExist = await _repository.AnyAsync(x=>x.ProduceDate == product.ProduceDate||x.ManufactureEmail == product.ManufactureEmail);
             if (isExist)
             {
-                return 0;
+                throw new ValidationException(
+                           new List<ValidationFailure>()
+                           {
+                                   new ValidationFailure()
+                                       {
+                                           ErrorCode = "Duplication",
+                                           ErrorMessage = "Product Produce Date Or Product Manufacture Email Is Can Not Be Duplicate"
+                                       }
+                           });
             }
 
             await _repository.CreateAsync(product);

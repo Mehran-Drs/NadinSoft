@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
 using NadinSoft.Domain.Repositories;
 
@@ -16,17 +17,49 @@ namespace NadinSoft.Application.CQRS.Products.Commands.DeleteProduct
         }
         public async Task<bool> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
-            var result = false;
-
             var product = await _repository.GetByIdAsync(request.ProductId);
 
             if (product != null)
             {
+                if (product.CreatorId != request.CreatorId)
+                {
+                    throw new ValidationException(
+                        new List<ValidationFailure>()
+                        {
+                              new ValidationFailure()
+                                  {
+                                      ErrorCode = "NoAccess",
+                                      ErrorMessage = "User Can Not Delete Product"
+                                  }
+                        });
+                }
+
                 product = _mapper.Map(request, product);
-                result = await _repository.UpdateAsync(product);
+                var result = await _repository.DeleteAsync(product);
+                if (result)
+                {
+                    return result;
+                }
+                throw new ValidationException(
+               new List<ValidationFailure>()
+               {
+                                   new ValidationFailure()
+                                       {
+                                           ErrorCode = "ServerError",
+                                           ErrorMessage = "Something Went Wrong..."
+                                       }
+               });
             }
 
-            return result;
+            throw new ValidationException(
+                           new List<ValidationFailure>()
+                           {
+                                   new ValidationFailure()
+                                       {
+                                           ErrorCode = "NotFound",
+                                           ErrorMessage = "Product Not Found"
+                                       }
+                           });
         }
     }
 }

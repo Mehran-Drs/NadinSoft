@@ -22,17 +22,17 @@ namespace NadinSoft.Infrastructure.Repositories
         {
             var products = _context.Products.AsQueryable();
 
-            if (filter != null)
-            {
-                products = products.Where(filter);
-            }
-
             if (includes != null)
             {
                 foreach (var include in includes)
                 {
                     products = products.Include(include);
                 }
+            }
+
+            if (filter != null)
+            {
+                products = products.Where(filter);
             }
 
             return products;

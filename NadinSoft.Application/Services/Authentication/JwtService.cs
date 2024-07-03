@@ -36,7 +36,7 @@ namespace NadinSoft.Application.Services.Authentication
 
         public List<Claim> GetClaims(string token)
         {
-            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token.Split("Bearer ")[1]);
 
             return jwt.Claims.ToList();
         }
