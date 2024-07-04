@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using NadinSoft.Application.Behaviors;
 using NadinSoft.Application.CQRS.Products.Queries.GetProduct;
+using NadinSoft.Application.Exceptions;
 using NadinSoft.Application.Profiles.Users;
-using NadinSoft.Application.Services.Authentication;
+using NadinSoft.Application.Services.Authentication.JwtServices;
 using NadinSoft.Application.Validations.Products;
 using NadinSoft.Common.DTOs;
 using System.Text;
@@ -15,11 +17,18 @@ namespace NadinSoft.Application.Configs
 {
     public static class StartupConfig
     {
+
+        public static void AddCustomExceptionHanlder(this IServiceCollection services)
+        {
+            services.AddExceptionHandler<GlobalExceptionHandler>();
+            services.AddProblemDetails();
+        }
         public static void AddMediatRConfig(this IServiceCollection services)
         {
             services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(typeof(GetProductQuery).Assembly);
+                cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
             });
         }
 

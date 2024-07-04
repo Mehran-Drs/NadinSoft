@@ -2,11 +2,13 @@
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
+using NadinSoft.Application.Common;
 using NadinSoft.Domain.Repositories;
+using System.Net;
 
 namespace NadinSoft.Application.CQRS.Products.Commands.DeleteProduct
 {
-    internal sealed class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, bool>
+    public sealed class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, Result<bool>>
     {
         private readonly IMapper _mapper;
         private readonly IProductRepository _repository;
@@ -15,51 +17,33 @@ namespace NadinSoft.Application.CQRS.Products.Commands.DeleteProduct
             _repository = repository;
             _mapper = mapper;
         }
-        public async Task<bool> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
+        public async Task<Result<bool>> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
         {
+            Result<bool> baseResult;
             var product = await _repository.GetByIdAsync(request.ProductId);
 
             if (product != null)
             {
                 if (product.CreatorId != request.CreatorId)
                 {
-                    throw new ValidationException(
-                        new List<ValidationFailure>()
-                        {
-                              new ValidationFailure()
-                                  {
-                                      ErrorCode = "NoAccess",
-                                      ErrorMessage = "User Can Not Delete Product"
-                                  }
-                        });
+                    baseResult = new Result<bool>(false, false, new List<Error>() { new Error("NOTALLOWED", "User Can Not Delete This Item") });
+                    return baseResult;
                 }
 
                 product = _mapper.Map(request, product);
                 var result = await _repository.DeleteAsync(product);
                 if (result)
                 {
-                    return result;
+                    baseResult = new Result<bool>(true);
+                    return baseResult;
                 }
-                throw new ValidationException(
-               new List<ValidationFailure>()
-               {
-                                   new ValidationFailure()
-                                       {
-                                           ErrorCode = "ServerError",
-                                           ErrorMessage = "Something Went Wrong..."
-                                       }
-               });
+
+                baseResult = new Result<bool>(false,false, new List<Error>() { new Error("SERVERERROR", "Something Went Wrong ...") });
+                return baseResult;
             }
 
-            throw new ValidationException(
-                           new List<ValidationFailure>()
-                           {
-                                   new ValidationFailure()
-                                       {
-                                           ErrorCode = "NotFound",
-                                           ErrorMessage = "Product Not Found"
-                                       }
-                           });
+            baseResult = new Result<bool>(false, false, new List<Error>() { new Error("NOTFOUND", "Product Could Not Be Found") });
+            return baseResult;
         }
     }
 }

@@ -1,10 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NadinSoft.Common.DTOs;
-using NadinSoft.Common.Extensions;
 using NadinSoft.DataBase.Contexts;
 using NadinSoft.Domain.Entities.Products;
 using NadinSoft.Domain.Repositories;
-using System.ComponentModel;
 using System.Linq.Expressions;
 
 namespace NadinSoft.Infrastructure.Repositories
@@ -63,11 +60,6 @@ namespace NadinSoft.Infrastructure.Repositories
             return isExist;
         }
 
-        public async Task<List<Product>> GetAllAsync()
-        {
-            var products = await _context.Products.ToListAsync();
-            return products;
-        }
 
         public async Task<Product> GetByIdAsync(int id)
         {

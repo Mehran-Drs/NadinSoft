@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Identity;
+using NadinSoft.Application.Common;
 
 namespace NadinSoft.Application.CQRS.Authentication.Command
 {
-    public class RegisterUserCommand : IRequest<int>
+    public class RegisterUserCommand : IRequest<Result<int>>
     {
         public string UserName { get; set; }
         public string Password { get; set; }

@@ -17,7 +17,9 @@ namespace NadinSoft.Application.Validations.Products
                     .NotEmpty()
                     .WithMessage("Manufacture Email Can Not Be Empty")
                     .MaximumLength(250)
-                    .WithMessage("Maximum Length Is 250 Character");
+                    .WithMessage("Maximum Length Is 250 Character")
+                    .EmailAddress()
+                    .WithMessage("Email Format Is Not Correct");
 
                 RuleFor(x => x.ProduceDate)
                     .NotEmpty()
@@ -34,8 +36,6 @@ namespace NadinSoft.Application.Validations.Products
                     .WithMessage("Manufacture Phone Can Not Be Empty")
                     .MaximumLength(11)
                     .WithMessage("Maximum Length Is 11 Character");
-
-
         }
     }
 }

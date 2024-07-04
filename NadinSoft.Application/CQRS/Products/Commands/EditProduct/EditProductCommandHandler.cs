@@ -1,41 +1,43 @@
 ﻿using AutoMapper;
-using FluentValidation;
-using FluentValidation.Results;
 using MediatR;
+using NadinSoft.Application.Common;
 using NadinSoft.Domain.Repositories;
 
 namespace NadinSoft.Application.CQRS.Products.Commands.EditProduct
 {
-    internal sealed class EditProductCommandHandler : IRequestHandler<EditProductCommand, bool>
+    public sealed class EditProductCommandHandler : IRequestHandler<EditProductCommand, Result<bool>>
     {
         private readonly IMapper _mapper;
         private readonly IProductRepository _repository;
-        private readonly IValidator<EditProductCommand> _validator;
-        public EditProductCommandHandler(IProductRepository repository, IMapper mapper, IValidator<EditProductCommand> validator)
+        public EditProductCommandHandler(IProductRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
-            _validator = validator;
         }
-        public async Task<bool> Handle(EditProductCommand request, CancellationToken cancellationToken)
+        public async Task<Result<bool>> Handle(EditProductCommand request, CancellationToken cancellationToken)
         {
-            await _validator.ValidateAndThrowAsync(request, cancellationToken);
-
+            Result<bool> baseResult;
             var product = await _repository.GetByIdAsync(request.Id);
 
             if (product != null)
             {
                 if (product.CreatorId != request.CreatorId)
                 {
-                    throw new ValidationException(
-                        new List<ValidationFailure>()
+                    baseResult = new Result<bool>(false, false, new List<Error>() { new Error("NOTALLOWED", "User Cannot Edit This Item") });
+                    return baseResult;
+                }
+
+                var isExist = await _repository.AnyAsync(x => x.ProduceDate == product.ProduceDate || x.ManufactureEmail == product.ManufactureEmail && x.Id != product.Id);
+                if (isExist)
+                {
+                    baseResult = new Result<bool>(false,
+                        false,
+                        new List<Error>()
                         {
-                              new ValidationFailure()
-                                  {
-                                      ErrorCode = "NoAccess",
-                                      ErrorMessage = "User Can Not Edit Product"
-                                  }
+                        new Error("DUPLICATED","Product Produce Date Or Product Manufacture Email Can Not Be Duplicate" )
                         });
+
+                    return baseResult;
                 }
 
 
@@ -44,28 +46,15 @@ namespace NadinSoft.Application.CQRS.Products.Commands.EditProduct
 
                 if (result)
                 {
-                    return result;
+                    baseResult = new Result<bool>(true);
+                    return baseResult;
                 }
-                throw new ValidationException(
-                    new List<ValidationFailure>()
-                    {
-                         new ValidationFailure()
-                             {
-                                 ErrorCode = "ServerError",
-                                 ErrorMessage = "Something Went Wrong..."
-                             }
-                    });
+                baseResult = new Result<bool>(false, false, new List<Error>() { new Error("SERVERERROR", "Something Went Wrong ...") });
+                return baseResult;
             }
 
-            throw new ValidationException(
-                new List<ValidationFailure>()
-                {
-                     new ValidationFailure()
-                          {
-                             ErrorCode = "NotFound",
-                             ErrorMessage = "Product Not Found"
-                          }
-                });  
+            baseResult = new Result<bool>(false, false, new List<Error>() { new Error("NOTFOUND", "Product Could Not Be Found") });
+            return baseResult;
         }
     }
 }

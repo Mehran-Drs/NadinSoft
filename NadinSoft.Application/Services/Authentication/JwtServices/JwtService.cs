@@ -6,7 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace NadinSoft.Application.Services.Authentication
+namespace NadinSoft.Application.Services.Authentication.JwtServices
 {
     public class JwtService : IJwtService
     {
@@ -14,7 +14,7 @@ namespace NadinSoft.Application.Services.Authentication
 
         public JwtService(IOptions<AthenticationConfigDto> options)
         {
-            _jwtConfig = options.Value.Jwt ;
+            _jwtConfig = options.Value.Jwt;
         }
 
         public string GenerateToken(List<Claim> claims)

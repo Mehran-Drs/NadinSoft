@@ -2,13 +2,15 @@
 using FluentValidation.Results;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using NadinSoft.Application.Services.Authentication;
+using NadinSoft.Application.Common;
+using NadinSoft.Application.Services.Authentication.JwtServices;
 using NadinSoft.Domain.Entities.Users;
+using System.Net;
 using System.Security.Claims;
 
 namespace NadinSoft.Application.CQRS.Authentication.Query
 {
-    internal sealed class LoginQueryHandler : IRequestHandler<LoginQuery, LoginQueryResult>
+    public sealed class LoginQueryHandler : IRequestHandler<LoginQuery, Result<LoginQueryResult>>
     {
         private readonly IJwtService _jwtService;
         private readonly UserManager<User> _userManager;
@@ -19,8 +21,10 @@ namespace NadinSoft.Application.CQRS.Authentication.Query
             _userManager = userManager;
         }
 
-        public async Task<LoginQueryResult> Handle(LoginQuery request, CancellationToken cancellationToken)
+        public async Task<Result<LoginQueryResult>> Handle(LoginQuery request, CancellationToken cancellationToken)
         {
+            Result<LoginQueryResult> baseResult;
+
             var user = await _userManager.FindByNameAsync(request.UserName);
 
             var result = new LoginQueryResult();
@@ -37,19 +41,13 @@ namespace NadinSoft.Application.CQRS.Authentication.Query
                     };
                     var jwt = _jwtService.GenerateToken(claims);
                     result.Token = jwt;
-                    return result;
+                    baseResult = new Result<LoginQueryResult>(result);
+                    return baseResult;
                 }
             }
 
-            throw new ValidationException(
-                new List<ValidationFailure>()
-                {
-                    new ValidationFailure()
-                        {
-                            ErrorCode = "NotFound",
-                            ErrorMessage = "User Not Found"
-                        }
-                });
+            baseResult = new Result<LoginQueryResult>(result, false, new List<Error>() { new Error("NOTFOUND","User Not Found")});
+            return baseResult;
         }
     }
 }

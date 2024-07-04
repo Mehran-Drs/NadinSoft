@@ -1,40 +1,34 @@
 ﻿using AutoMapper;
-using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using NadinSoft.Application.Common;
 using NadinSoft.Domain.Entities.Users;
 
 namespace NadinSoft.Application.CQRS.Authentication.Command
 {
-    internal sealed class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, int>
+    public sealed class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Result<int>>
     {
-        private readonly IValidator<RegisterUserCommand> _validator;
+        
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
-        public RegisterUserCommandHandler(UserManager<User> userManager, IMapper mapper, IValidator<RegisterUserCommand> validator)
+        public RegisterUserCommandHandler(UserManager<User> userManager, IMapper mapper)
         {
             _userManager = userManager;
             _mapper = mapper;
-            _validator = validator;
         }
 
-        public async Task<int> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+        public async Task<Result<int>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
-            await _validator.ValidateAndThrowAsync(request, cancellationToken); 
-
+            Result<int> baseResult;
             var user = _mapper.Map<User>(request);
 
             var result = await _userManager.CreateAsync(user, request.Password);
             if (result.Succeeded)
             {
-                return user.Id;
+                baseResult = new Result<int>(user.Id);
+                return baseResult;
             }
-
-            throw new ValidationException(result.Errors.Select(x => new FluentValidation.Results.ValidationFailure()
-            {
-                ErrorCode = x.Code,
-                ErrorMessage = x.Description
-            }));
+            return baseResult = new Result<int>(0, false,result.Errors.Select(x=>new Error(x.Code,x.Description)).ToList());
         }
     }
 }

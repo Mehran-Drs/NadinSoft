@@ -1,9 +1,10 @@
 ﻿using MediatR;
+using NadinSoft.Application.Common;
 using System.Text.Json.Serialization;
 
 namespace NadinSoft.Application.CQRS.Products.Commands.CreateProduct
 {
-    public sealed class CreateProductCommand : IRequest<int>
+    public sealed class CreateProductCommand : IRequest<Result<int>>
     {
         public string Name { get; set; }
         public string ManufacturePhone { get; set; }

@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace NadinSoft.Application.Services.Authentication
+namespace NadinSoft.Application.Services.Authentication.JwtServices
 {
     public interface IJwtService
     {

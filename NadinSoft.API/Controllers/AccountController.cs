@@ -23,7 +23,12 @@ namespace NadinSoft.API.Controllers
         {
             var result = await _mediator.Send(model);
 
-            return Ok(result);
+            if (result.IsSuccessful)
+            {
+                return Created("/", result);
+            }
+
+            return BadRequest(result);
         }
 
         [HttpPost("Login")]
@@ -31,7 +36,12 @@ namespace NadinSoft.API.Controllers
         {
             var result = await _mediator.Send(model);
 
-            return Ok(result);
+            if (result.IsSuccessful)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
         }
     }
 }

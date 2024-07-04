@@ -1,9 +1,10 @@
 ﻿using MediatR;
+using NadinSoft.Application.Common;
 using System.Text.Json.Serialization;
 
 namespace NadinSoft.Application.CQRS.Products.Commands.EditProduct
 {
-    public sealed class EditProductCommand : IRequest<bool>
+    public sealed class EditProductCommand : IRequest<Result<bool>>
     {
         public int Id { get; set; }
 

@@ -7,6 +7,7 @@ using NadinSoft.Application.Configs;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using NadinSoft.Application.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,7 @@ builder.Services.AddMediatRConfig();
 builder.Services.AddValidations();
 builder.Services.AddJwt(builder.Configuration);
 builder.Services.AddIdentity();
+builder.Services.AddCustomExceptionHanlder();
 
 var app = builder.Build();
 
@@ -57,52 +59,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//#region EnsureDbCreated
-//using (var scope = app.Services.CreateScope())
-//{
-//    var services = scope.ServiceProvider;
-//    var dbContext = services.GetRequiredService<NadinSoftContext>();
-//    if (dbContext.Database.CanConnect())
-//    {
-//        return;
-//    }
-//    dbContext.Database.EnsureCreated();
-//}
-//#endregion
+app.UseExceptionHandler();
 
-//#region ApplyMissingMigrations
-//using (var scope = app.Services.CreateScope())
-//{
-//    var services = scope.ServiceProvider;
-//    var dbContext = services.GetRequiredService<NadinSoftContext>();
-
-//    var appliedMigrations = dbContext.Database.GetAppliedMigrations().ToList();
-//    var allMigrations = dbContext.Database.GetMigrations().ToList();
-
-//    var missingMigrations = allMigrations.Where(x => !appliedMigrations.Contains(x)).ToList();
-
-//    foreach (var missingMigration in missingMigrations)
-//    {
-//        try
-//        {
-//            var migrator = dbContext.GetInfrastructure().GetRequiredService<IMigrator>();
-//            // Apply the missing migration
-//            migrator.Migrate(missingMigration);
-//        }
-//        catch (Exception ex)
-//        {
-//            Console.WriteLine($"Error applying migration '{missingMigration}': {ex.Message}");
-//        }
-//    }
-//}
-//#endregion
+// Ensure the database is created and migrations are applied
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<NadinSoftContext>();
+    dbContext.Database.Migrate();
+}
 
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
+//app.UseMiddleware<ValidationExceptionHandlingMiddleware>();
 
 app.MapControllers();
 

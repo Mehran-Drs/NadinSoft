@@ -13,8 +13,6 @@ namespace NadinSoft.Domain.Repositories
 
         IQueryable<Product> AsQueryable(Expression<Func<Product, bool>> filter = null, params Expression<Func<Product, object>>[] includes);
 
-        Task<List<Product>> GetAllAsync();
-
         Task<Product> GetByIdAsync(int id);
 
         Task<bool> AnyAsync(Expression<Func<Product, bool>> filter);  

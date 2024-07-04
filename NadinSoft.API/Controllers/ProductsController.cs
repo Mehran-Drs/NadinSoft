@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NadinSoft.Application.CQRS.Products.Commands.CreateProduct;
 using NadinSoft.Application.CQRS.Products.Commands.DeleteProduct;
 using NadinSoft.Application.CQRS.Products.Commands.EditProduct;
 using NadinSoft.Application.CQRS.Products.Queries.GetProduct;
 using NadinSoft.Application.CQRS.Products.Queries.GetProductsList;
-using NadinSoft.Application.Services.Authentication;
+using NadinSoft.Application.Services.Authentication.JwtServices;
 
 namespace NadinSoft.API.Controllers
 {
@@ -25,7 +24,7 @@ namespace NadinSoft.API.Controllers
             _jwtService = jwtService;
         }
 
-        [HttpGet("GetProductById")]
+        [HttpGet("GetProductById/{id}")]
         [Authorize]
         public async Task<IActionResult> GetProductById(int id)
         {
@@ -36,7 +35,12 @@ namespace NadinSoft.API.Controllers
 
             var result = await _mediator.Send(model);
 
-            return Ok(result);
+            if (result.IsSuccessful)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
         }
 
         [HttpGet("GetProducts")]
@@ -53,7 +57,12 @@ namespace NadinSoft.API.Controllers
 
             var result = await _mediator.Send(model);
 
-            return Ok(result);
+            if (result.IsSuccessful)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
         }
 
         [HttpPost("CreateProduct")]
@@ -65,7 +74,12 @@ namespace NadinSoft.API.Controllers
 
             var result = await _mediator.Send(model);
 
-            return Ok(result);
+            if (result.IsSuccessful)
+            {
+                return Created($"/api/products/getproductbyid/{result.Value}",result);
+            }
+
+            return BadRequest(result);
         }
 
         [HttpPut("EditProduct")]
@@ -77,7 +91,12 @@ namespace NadinSoft.API.Controllers
 
             var result = await _mediator.Send(model);
 
-            return Ok(result);
+            if (result.IsSuccessful)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
         }
 
         [HttpDelete("DeleteProduct")]
@@ -89,7 +108,12 @@ namespace NadinSoft.API.Controllers
 
             var result = await _mediator.Send(model);
 
-            return Ok(result);
+            if (result.IsSuccessful)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
         }
     }
 }
